@@ -1,7 +1,7 @@
 module Xremap
   class Config
     # FIXME: :to_keys should be :to_actions, and Key and Execute should be adapted.
-    Remap = Struct.new(:from_key, :to_keys)
+    Remap = Struct.new(:from_key, :to_keys, :possible_combination_modifiers)
     Execute = Struct.new(:command, :action)
 
     class Key < Struct.new(:keysym, :modifier, :action)

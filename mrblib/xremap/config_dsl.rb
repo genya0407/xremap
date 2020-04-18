@@ -10,10 +10,12 @@ module Xremap
       # Array() doesn't work for Config::Execute somehow.
       to_strs = options.fetch(:to)
       to_strs = [to_strs] unless to_strs.is_a?(Array)
+      with_masks = Array(options.fetch(:with_modifier, [])).map { |mod| KeyExpression.modifier_to_mask(mod) }
 
       @config.remaps_by_window[@window] << Config::Remap.new(
         compile_exp(from_str),
-        to_strs.map { |str| compile_exp(str) }
+        to_strs.map { |str| compile_exp(str) },
+        all_possible_with_masks(with_masks),
       )
     end
 
@@ -59,6 +61,15 @@ module Xremap
         KeyExpression.compile(exp)
       else
         raise "unexpected expression: #{exp.inspect}"
+      end
+    end
+
+    def all_possible_with_masks(with_masks)
+      if with_masks.size == 0
+        [0]
+      else
+        possible_masks_without_first_mask = all_possible_with_masks(with_masks[1..with_masks.size])
+        possible_masks_without_first_mask.map { |mask| mask | with_masks[0] }.to_a + possible_masks_without_first_mask
       end
     end
   end

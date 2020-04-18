@@ -8,6 +8,19 @@ module Xremap
         Config::Key.new(to_keysym(keyexp), modifier_mask(modifiers))
       end
 
+      def modifier_to_mask(modifier)
+        case modifier
+        when 'C', 'Ctrl'
+          X11::ControlMask
+        when 'M', 'Alt'
+          X11::Mod1Mask
+        when 'Super', 'Win'
+          X11::Mod4Mask
+        when 'Shift'
+          X11::ShiftMask
+        end
+      end
+
       private
 
       def split_into_key_and_mods(exp)
